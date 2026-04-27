@@ -39,15 +39,18 @@ class BrainTumorPredictor:
         else:
             # Convert numpy array to PIL Image if needed
             if isinstance(image_path_or_array, np.ndarray):
-                img = Image.fromarray((image_path_or_array * 255).astype(np.uint8))
+                if image_path_or_array.dtype == np.uint8 or image_path_or_array.max() > 1.0:
+                    img = Image.fromarray(image_path_or_array.astype(np.uint8)).convert('RGB')
+                else:
+                    img = Image.fromarray((image_path_or_array * 255).astype(np.uint8)).convert('RGB')
             else:
-                img = image_path_or_array
+                img = image_path_or_array.convert('RGB')
         
         # Resize to model input size
         img = img.resize((config.IMG_WIDTH, config.IMG_HEIGHT))
         
-        # Convert to array and normalize
-        img_array = np.array(img, dtype=np.float32) / 255.0
+        # Convert to array (no normalization; EfficientNet expects 0-255)
+        img_array = np.array(img, dtype=np.float32)
         
         # Add batch dimension
         img_array = np.expand_dims(img_array, axis=0)
