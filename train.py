@@ -36,9 +36,15 @@ def plot_training_history(history):
     axes[0, 1].legend()
     axes[0, 1].grid(True, alpha=0.3)
     
+    # Find exact metric keys (Keras sometimes appends _1, _2 to metric names)
+    prec_key = next((k for k in history.keys() if k.startswith('precision') and not k.startswith('val_')), 'precision')
+    val_prec_key = next((k for k in history.keys() if k.startswith('val_precision')), 'val_precision')
+    rec_key = next((k for k in history.keys() if k.startswith('recall') and not k.startswith('val_')), 'recall')
+    val_rec_key = next((k for k in history.keys() if k.startswith('val_recall')), 'val_recall')
+
     # Precision
-    axes[1, 0].plot(history['precision'], label='Train Precision', linewidth=2)
-    axes[1, 0].plot(history['val_precision'], label='Val Precision', linewidth=2)
+    axes[1, 0].plot(history[prec_key], label='Train Precision', linewidth=2)
+    axes[1, 0].plot(history[val_prec_key], label='Val Precision', linewidth=2)
     axes[1, 0].set_title('Model Precision', fontsize=12, fontweight='bold')
     axes[1, 0].set_xlabel('Epoch')
     axes[1, 0].set_ylabel('Precision')
@@ -46,8 +52,8 @@ def plot_training_history(history):
     axes[1, 0].grid(True, alpha=0.3)
     
     # Recall
-    axes[1, 1].plot(history['recall'], label='Train Recall', linewidth=2)
-    axes[1, 1].plot(history['val_recall'], label='Val Recall', linewidth=2)
+    axes[1, 1].plot(history[rec_key], label='Train Recall', linewidth=2)
+    axes[1, 1].plot(history[val_rec_key], label='Val Recall', linewidth=2)
     axes[1, 1].set_title('Model Recall', fontsize=12, fontweight='bold')
     axes[1, 1].set_xlabel('Epoch')
     axes[1, 1].set_ylabel('Recall')

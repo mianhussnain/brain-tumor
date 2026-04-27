@@ -35,20 +35,6 @@ ENV/
 *~
 .DS_Store
 
-# TensorFlow and models
-*.h5
-*.pb
-*.ckpt
-*.pth
-saved_model/
-models/
-logs/
-
-# Data
-data/
-*.csv
-*.pkl
-*.pickle
 
 # Jupyter
 .ipynb_checkpoints/
