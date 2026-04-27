@@ -135,7 +135,7 @@ def print_usage_guide():
    
    from predict import BrainTumorPredictor
    
-   predictor = BrainTumorPredictor("models/brain_tumor_model_final.h5")
+   predictor = BrainTumorPredictor("models/brain_tumor_model_final.keras")
    result = predictor.predict("path/to/image.jpg")
    
    print(f"Class: {result['predicted_class']}")

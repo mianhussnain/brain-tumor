@@ -138,8 +138,8 @@ This will:
 - Generate performance plots
 
 **Expected Output:**
-- Trained model: `models/brain_tumor_model_final.h5`
-- Best model checkpoint: `models/brain_tumor_model_best.h5`
+- Trained model: `models/brain_tumor_model_final.keras`
+- Best model checkpoint: `models/brain_tumor_model_best.keras`
 - Training plots: `models/training_history.png`
 - Confusion matrix: `models/confusion_matrix.png`
 
@@ -164,7 +164,7 @@ from predict import BrainTumorPredictor
 from PIL import Image
 
 # Initialize predictor
-predictor = BrainTumorPredictor(model_path="models/brain_tumor_model_final.h5")
+predictor = BrainTumorPredictor(model_path="models/brain_tumor_model_final.keras")
 
 # Make prediction
 result = predictor.predict("path/to/image.jpg")
@@ -187,8 +187,8 @@ brain-tumor/
 │   ├── Training/                  # Training images (4 classes)
 │   └── Testing/                   # Testing images (4 classes)
 ├── models/                        # Saved models & outputs
-│   ├── brain_tumor_model_final.h5
-│   ├── brain_tumor_model_best.h5
+│   ├── brain_tumor_model_final.keras
+│   ├── brain_tumor_model_best.keras
 │   ├── training_history.png
 │   └── confusion_matrix.png
 ├── logs/                          # TensorBoard logs
@@ -261,17 +261,17 @@ After training on your dataset:
 
 ```
 Test Set Results:
-  Loss:      ~0.xx
-  Accuracy:  ~xx.xx%
-  Precision: ~xx.xx%
-  Recall:    ~xx.xx%
-  AUC:       ~0.xx
+  Loss:      ~0.43
+  Accuracy:  ~87.31%
+  Precision: ~87.85%
+  Recall:    ~87.31%
+  AUC:       ~0.98
 
-Per-Class Performance:
-  Glioma:     ~xx.xx%
-  Meningioma: ~xx.xx%
-  No Tumor:   ~xx.xx%
-  Pituitary:  ~xx.xx%
+Per-Class Performance (Accuracy/Recall):
+  Glioma:     ~67.25%
+  Meningioma: ~84.25%
+  No Tumor:   ~99.50%
+  Pituitary:  ~98.25%
 ```
 
 ### Confidence Levels
@@ -307,7 +307,7 @@ Per-Class Performance:
 ### Model Not Loading
 ```bash
 # Check if model exists
-ls models/brain_tumor_model_final.h5
+ls models/brain_tumor_model_final.keras
 
 # If missing, run training first
 python train.py
@@ -328,6 +328,10 @@ python train.py
 - Increase training epochs
 - Add more diverse training data
 - Adjust learning rate
+
+### Consistent "noTumor" Predictions (68-75% Confidence)
+- **Cause**: Input normalization mismatch. EfficientNetB4 expects inputs in the `[0, 255]` range. If prediction preprocessing divides inputs by `255.0` to force them into a `[0, 1]` range, the model will fail to recognize features and default to its bias distribution.
+- **Solution**: This has been resolved in v1.0.1+ by removing the `/ 255.0` normalization step in `predict.py` and correctly handling integer image arrays without artificial scaling.
 
 ## 📚 Dependencies
 
@@ -362,4 +366,4 @@ For issues or questions:
 
 **Last Updated**: 2026  
 **Status**: Production Ready  
-**Version**: 1.0.0
+**Version**: 1.0.2
