@@ -12,13 +12,13 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="brain-tumor-detection",
-    version="1.0.0",
-    author="Medical AI Team",
-    author_email="",
+    version="1.0.3",
+    author="M.Hussnain",
+    author_email="chhussnain795@gmail.com",
     description="AI-powered brain tumor detection system using deep learning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/brain-tumor-detection",
+    url="https://github.com/mianhussnain/brain-tumor-detection",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

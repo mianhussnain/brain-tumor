@@ -26,8 +26,8 @@ EPOCHS = 30  # Reduced for faster testing
 LEARNING_RATE = 1e-4
 
 # Model checkpoint path
-BEST_MODEL_PATH = MODELS_DIR / "brain_tumor_model_best.keras"
-FINAL_MODEL_PATH = MODELS_DIR / "brain_tumor_model_final.keras"
+BEST_MODEL_PATH = MODELS_DIR / "brain_tumor_model_best_fixed.keras"
+FINAL_MODEL_PATH = MODELS_DIR / "brain_tumor_model_final_fixed.keras"
 HISTORY_PATH = MODELS_DIR / "training_history.pkl"
 
 # Class labels
@@ -57,3 +57,12 @@ MIN_LR = 1e-7
 
 # Threshold for confidence
 CONFIDENCE_THRESHOLD = 0.60
+
+# ── Binary (Yes / No) model ────────────────────────────────────────────────
+BINARY_DATA_DIR        = DATA_DIR / "yes-no_dataset"
+BINARY_CLASSES         = ["No Tumor", "Tumor"]   # index 0 = no, 1 = yes
+BINARY_MODEL_PATH      = MODELS_DIR / "binary_tumor_model.keras"
+BINARY_BEST_MODEL_PATH = MODELS_DIR / "binary_tumor_model_best.keras"
+BINARY_BATCH_SIZE      = 8    # small dataset → small batch
+BINARY_EPOCHS          = 60   # more epochs with early stopping
+BINARY_LEARNING_RATE   = 1e-4

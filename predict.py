@@ -10,22 +10,38 @@ import config
 
 
 class BrainTumorPredictor:
-    """Make predictions on new images"""
-    
-    def __init__(self, model_path=None):
+    """Make predictions on new images.
+
+    Parameters
+    ----------
+    model_path : Path or str
+        Path to the Keras model file.
+    mode : str
+        '4class' (default) — 4-class softmax classifier.
+        'binary'           — binary sigmoid (Tumor / No Tumor).
+    """
+
+    def __init__(self, model_path=None, mode="4class"):
         self.model = None
-        self.class_names = config.CLASSES
-        self.confidence_threshold = config.CONFIDENCE_THRESHOLD
-        
-        if model_path is None:
-            model_path = config.FINAL_MODEL_PATH
-        
+        self.mode  = mode
+
+        if mode == "binary":
+            self.class_names = config.BINARY_CLASSES          # ["No Tumor", "Tumor"]
+            self.confidence_threshold = config.CONFIDENCE_THRESHOLD
+            if model_path is None:
+                model_path = config.BINARY_MODEL_PATH
+        else:
+            self.class_names = config.CLASSES                 # 4-class list
+            self.confidence_threshold = config.CONFIDENCE_THRESHOLD
+            if model_path is None:
+                model_path = config.FINAL_MODEL_PATH
+
         self.load_model(model_path)
-    
+
     def load_model(self, model_path):
         """Load the trained model"""
         try:
-            self.model = keras.models.load_model(str(model_path))
+            self.model = keras.models.load_model(str(model_path), compile=False)
             print(f"Model loaded successfully from: {model_path}")
         except FileNotFoundError:
             print(f"Error: Model not found at {model_path}")
@@ -59,42 +75,55 @@ class BrainTumorPredictor:
     
     def predict(self, image_path_or_array):
         """
-        Make prediction on an image
-        
+        Make prediction on an image.
+
         Args:
             image_path_or_array: Path to image file or numpy array
-        
+
         Returns:
-            Dictionary with predictions and confidence scores
+            Dictionary with keys:
+                predicted_class, confidence, is_confident,
+                all_predictions, sorted_predictions
         """
-        # Preprocess
-        img_array, original_img = self.preprocess_image(image_path_or_array)
-        
-        # Make prediction
-        predictions = self.model.predict(img_array, verbose=0)[0]
-        
-        # Get top prediction
-        predicted_class_idx = np.argmax(predictions)
-        predicted_class = self.class_names[predicted_class_idx]
-        confidence = predictions[predicted_class_idx]
-        
-        # Create result dictionary
-        result = {
-            'predicted_class': predicted_class,
-            'confidence': float(confidence),
-            'is_confident': confidence >= self.confidence_threshold,
-            'all_predictions': {
-                self.class_names[i]: float(predictions[i])
-                for i in range(len(self.class_names))
-            },
-            'sorted_predictions': sorted(
-                [(self.class_names[i], float(predictions[i])) for i in range(len(self.class_names))],
-                key=lambda x: x[1],
-                reverse=True
+        img_array, _ = self.preprocess_image(image_path_or_array)
+        raw = self.model.predict(img_array, verbose=0)[0]
+
+        if self.mode == "binary":
+            # raw is a single sigmoid value: P(Tumor)
+            p_tumor    = float(raw[0]) if hasattr(raw, "__len__") else float(raw)
+            p_no_tumor = 1.0 - p_tumor
+
+            predicted_class = "Tumor" if p_tumor >= 0.5 else "No Tumor"
+            confidence      = p_tumor if p_tumor >= 0.5 else p_no_tumor
+
+            all_predictions = {
+                "No Tumor": p_no_tumor,
+                "Tumor":    p_tumor,
+            }
+            sorted_predictions = sorted(
+                all_predictions.items(), key=lambda x: x[1], reverse=True
             )
+        else:
+            # 4-class softmax
+            predicted_class_idx = int(np.argmax(raw))
+            predicted_class     = self.class_names[predicted_class_idx]
+            confidence          = float(raw[predicted_class_idx])
+
+            all_predictions = {
+                self.class_names[i]: float(raw[i])
+                for i in range(len(self.class_names))
+            }
+            sorted_predictions = sorted(
+                all_predictions.items(), key=lambda x: x[1], reverse=True
+            )
+
+        return {
+            "predicted_class":    predicted_class,
+            "confidence":         confidence,
+            "is_confident":       confidence >= self.confidence_threshold,
+            "all_predictions":    all_predictions,
+            "sorted_predictions": sorted_predictions,
         }
-        
-        return result
     
     def predict_batch(self, image_paths_or_arrays):
         """Make predictions on multiple images"""
