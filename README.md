@@ -126,6 +126,10 @@ data/
 
 ```bash
 python train.py
+
+OR
+
+python main.py app
 ```
 
 This will:
