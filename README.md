@@ -90,7 +90,7 @@ A professional-grade AI-powered web application for early-stage brain tumor dete
 
 1. **Clone repository**
 ```bash
-cd d:\pythonprojects\brain-tumor
+https://github.com/mianhussnain/brain-tumor.git
 ```
 
 2. **Create virtual environment**
@@ -146,7 +146,7 @@ This will:
 ### 2. Running the Web Application
 
 ```bash
-streamlit run app.py
+python main.py app
 ```
 
 Then open your browser to: `http://localhost:8501`
