@@ -129,7 +129,7 @@ python train.py
 
 OR
 
-python main.py app
+python main.py train
 ```
 
 This will:
