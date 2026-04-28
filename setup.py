@@ -19,6 +19,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/mianhussnain/brain-tumor-detection",
+    license="Apache License 2.0",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -26,7 +27,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Intended Audience :: Healthcare Industry",
         "Intended Audience :: Science/Research",
